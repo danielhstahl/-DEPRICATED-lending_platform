@@ -1,0 +1,27 @@
+{
+  "name": "tdd_example_test",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "enzyme": "^3.1.0",
+    "enzyme-adapter-react-16": "^1.0.2",
+    "react-scripts": "1.0.14"
+  },
+  "dependencies": {
+    "firebase": "^4.6.0",
+    "material-ui": "^1.0.0-beta.18",
+    "prop-types": "^15.6.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "react-redux": "^5.0.6",
+    "react-redux-firebase": "^1.5.1",
+    "react-router": "^4.2.0",
+    "redux": "^3.7.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
