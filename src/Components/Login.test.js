@@ -3,6 +3,7 @@ import { mount } from 'enzyme'
 import Button from 'material-ui/Button'
 import {Login} from './Login'
 
+//mock firebase
 const firebase=(expectFn)=>({
     login:(loginObj)=>expectFn(loginObj)
 })
@@ -15,21 +16,19 @@ it('defaults to login screen with providers', ()=>{
 })
 
 it('selects google provider on first login press', ()=>{
-    const login=mount(<Login firebase={firebase(
-        (loginObj)=>expect(loginObj).toEqual({
-            provider:'google',
-            type:'redirect'
-        })
-    )}/>)
-    login.find(Button).first().simulate('click')
+    const expectFn=(loginObj)=>expect(loginObj).toEqual({
+        provider:'google',
+        type:'redirect'
+    })
+    const login=mount(<Login firebase={firebase(expectFn)}/>)
+    login.find(Button).at(0).simulate('click')
 })
 it('selects twitter provider on second login press', ()=>{
-    const login=mount(<Login firebase={firebase(
-        (loginObj)=>expect(loginObj).toEqual({
-            provider:'twitter',
-            type:'redirect'
-        })
-    )}/>)
-    login.find(Button).last().simulate('click')
+    const expectFn=(loginObj)=>expect(loginObj).toEqual({
+        provider:'twitter',
+        type:'redirect'
+    })
+    const login=mount(<Login firebase={firebase(expectFn)}/>)
+    login.find(Button).at(1).simulate('click')
 })
 
