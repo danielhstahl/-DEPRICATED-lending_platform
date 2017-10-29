@@ -1,0 +1,16 @@
+{
+  "name": "sequence",
+  "version": "1.0.0",
+  "description": "interactions with sequence",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Daniel Stahl",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^21.2.1",
+    "sequence-sdk": "^1.0.3",
+    "uuid": "^3.1.0"
+  }
+}
