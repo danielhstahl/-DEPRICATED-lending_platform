@@ -22,6 +22,7 @@ const styles = theme => ({
     table: {
       minWidth: 700,
     },
+    somethingWrong:{backgroundColor:theme.palette.secondary.A100}
 })
 export const isLate=(dueDate, paymentDate)=>{
     if(!paymentDate){
@@ -50,15 +51,17 @@ export const Payments=withStyles(styles)(({firebase, classes})=>(
         </TableHead>
         <TableBody>
             {firebase.data.payments.map(payment=>{
-                //const isPaymentLate=isLate(new Date(payment.dueDate), payment.paymentDate?new Date(payment.paymentDate):null)
-                //const isPaymentSmall=isTooSmall(payment.paymentRequired)
+                const isPaymentLate=isLate(new Date(payment.dueDate), payment.paymentDate?new Date(payment.paymentDate):null)
+                const isPaymentSmall=isTooSmall(payment.paymentRequired)
+                const somethingWrong=isPaymentLate||isPaymentSmall
                 return (
-                <TableRow key={payment.id}>
+                <TableRow key={payment.id} className={somethingWrong?classes.somethingWrong:null}>
                     <TableCell>{payment.id}</TableCell>
                     <TableCell>{payment.dueDate}</TableCell>
                     <TableCell numeric>{payment.paymentRequired}</TableCell>
                     <TableCell>{payment.paymentDate}</TableCell>
                     <TableCell numeric>{payment.payment}</TableCell>
+                    {somethingWrong?<TableCell><Button>How will this impact me?</Button></TableCell>:null}
                 </TableRow>
             )})}
         </TableBody>
@@ -68,7 +71,13 @@ export const Payments=withStyles(styles)(({firebase, classes})=>(
 Payments.propTypes={
     firebase:PropTypes.shape({
         data:PropTypes.shape({
-            payments:PropTypes.arrayOf(PropTypes.object).isRequired
+            payments:PropTypes.arrayOf(PropTypes.shape({
+                id:PropTypes.string.isRequired,
+                dueDate:PropTypes.string.isRequired, //potentially change this to JS date
+                payment:PropTypes.number,
+                paymentDate:PropTypes.string,//potentially change this to JS date
+                paymentRequired:PropTypes.number.isRequired,
+            })).isRequired
         }).isRequired
     }).isRequired
 }

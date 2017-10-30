@@ -100,24 +100,23 @@ describe('no payment made', ()=>{
         paymentRequired:500
     }]
     it('highlights row', ()=>{
-        const payment=mount(<Payments firebase={firebase(payments)}/>)
-        const rowProps=payment.find(TableBody).find(TableRow).first().prop('style')
-        expect(rowProps).toEqual({
-            backgroundColor: theme.palette.secondary.A100
-        })
+        const payment=mount(<Payments firebase={firebase(payments)} currentDate={currentDate}/>)
+        const rowProps=payment.find(TableBody).find(TableRow).first().prop('background-color')
+        //console.log(payment.find(TableBody).find(TableRow).first().props())
+        expect(rowProps).toEqual(theme.palette.secondary.A100)
     })
     it('provides button with explanation', ()=>{
-        const payment=mount(<Payments firebase={firebase(payments)}/>)
+        const payment=mount(<Payments firebase={firebase(payments)} currentDate={currentDate}/>)
         const buttonText=payment.find(TableBody).find(TableRow).find(Button).text()
         expect(buttonText).toEqual('How will this impact me?') 
     })
     it('reveals modal on button click', ()=>{
-        const payment=mount(<Payments firebase={firebase(payments)}/>)
+        const payment=mount(<Payments firebase={firebase(payments)} currentDate={currentDate}/>)
         payment.find(TableBody).find(TableRow).find(Button).simulate('click')
         expect(payment.find(Dialog).props('open')).toEqual(true)
     })
     it('provides correct explanation in modal', ()=>{
-        const payment=mount(<Payments firebase={firebase(payments)}/>)
+        const payment=mount(<Payments firebase={firebase(payments)} currentDate={currentDate}/>)
         expect(payment.find(Dialog).find('p').first().text()).toEqual('Missed payments will cause additional interest to accrue and may impact your credit score.')
     })
 
@@ -130,12 +129,12 @@ describe('no payment made but not required yet', ()=>{
         paymentRequired:500
     }]
     it('does not highlight row', ()=>{
-        const payment=mount(<Payments firebase={firebase(payments)}/>)
+        const payment=mount(<Payments firebase={firebase(payments)} currentDate={currentDate}/>)
         const rowProps=payment.find(TableBody).find(TableRow).first().prop('style')
         expect(rowProps).toEqual({})
     })
     it('has no button', ()=>{
-        const payment=mount(<Payments firebase={firebase(payments)}/>)
+        const payment=mount(<Payments firebase={firebase(payments)} currentDate={currentDate}/>)
         expect(payment.find(TableBody).find(TableRow).find(Button).exists()).toEqual(false)
     })
 })
