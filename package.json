@@ -4,12 +4,12 @@
   "private": true,
   "devDependencies": {
     "enzyme": "^3.1.0",
-    "enzyme-adapter-react-16": "^1.0.2",
+    "enzyme-adapter-react-16": "^1.0.3",
     "react-scripts": "1.0.14"
   },
   "dependencies": {
-    "firebase": "^4.6.0",
-    "material-ui": "^1.0.0-beta.18",
+    "firebase": "^4.6.1",
+    "material-ui": "^1.0.0-beta.19",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
