@@ -12,6 +12,7 @@ import Dialog, { DialogTitle } from 'material-ui/Dialog'
 import PropTypes from 'prop-types'
 import {firebaseConnect} from 'react-redux-firebase'
 import {connect} from 'react-redux'
+import {Link, Route} from 'react-router-dom'
 
 const styles = theme => ({
     root: {
@@ -24,7 +25,8 @@ const styles = theme => ({
     },
     somethingWrong:{backgroundColor:theme.palette.secondary.A100}
 })
-export const isLate=(dueDate, paymentDate)=>{
+/**this logic, like all business logic, should be in the FaaS */
+/*export const isLate=(dueDate, paymentDate)=>{
     if(!paymentDate){
         return dueDate<new Date()
     }
@@ -35,10 +37,20 @@ export const isLate=(dueDate, paymentDate)=>{
 }
 export const isTooSmall=(required, actual)=>{
     return actual<required
-}
+}*/
 
-export const Payments=withStyles(styles)(({firebase, classes})=>(
+const Modal=({match, history, impact})=>(
+    <Dialog open={true} onRequestClose={history.goBack}>
+        <DialogTitle>Explanation</DialogTitle>
+        <p>
+        {impact}
+        </p>
+    </Dialog>
+)
+
+export const Payments=withStyles(styles)(({firebase, classes, match})=>(
 <Paper className={classes.root}>
+    
     <Table className={classes.table}>
         <TableHead>
             <TableRow>
@@ -50,18 +62,17 @@ export const Payments=withStyles(styles)(({firebase, classes})=>(
             </TableRow>
         </TableHead>
         <TableBody>
-            {firebase.data.payments.map(payment=>{
-                const isPaymentLate=isLate(new Date(payment.dueDate), payment.paymentDate?new Date(payment.paymentDate):null)
-                const isPaymentSmall=isTooSmall(payment.paymentRequired)
-                const somethingWrong=isPaymentLate||isPaymentSmall
+            {firebase.data.payments.map(({id, dueDate, paymentRequired, paymentDate, payment, issue, impact})=>{
+                const url=`${match.url}/modal/${id}`
                 return (
-                <TableRow key={payment.id} className={somethingWrong?classes.somethingWrong:null}>
-                    <TableCell>{payment.id}</TableCell>
-                    <TableCell>{payment.dueDate}</TableCell>
-                    <TableCell numeric>{payment.paymentRequired}</TableCell>
-                    <TableCell>{payment.paymentDate}</TableCell>
-                    <TableCell numeric>{payment.payment}</TableCell>
-                    {somethingWrong?<TableCell><Button>How will this impact me?</Button></TableCell>:null}
+                <TableRow key={id} className={issue?classes.somethingWrong:null}>
+                    <TableCell>{id}</TableCell>
+                    <TableCell>{dueDate}</TableCell>
+                    <TableCell numeric>{paymentRequired}</TableCell>
+                    <TableCell>{paymentDate}</TableCell>
+                    <TableCell numeric>{payment}</TableCell>
+                    {issue?<TableCell><Link to={url}><Button>How will this impact me?</Button></Link></TableCell>:null}
+                    <Route path={url} render={({match, history})=><Modal match={match} history={history} impact={impact}/>}/>
                 </TableRow>
             )})}
         </TableBody>
