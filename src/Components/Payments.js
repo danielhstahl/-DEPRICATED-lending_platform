@@ -13,7 +13,7 @@ import PropTypes from 'prop-types'
 import {firebaseConnect} from 'react-redux-firebase'
 import {connect} from 'react-redux'
 import {Link, Route} from 'react-router-dom'
-
+import PaymentModal from './PaymentModal'
 const styles = theme => ({
     root: {
       width: '100%',
@@ -39,18 +39,9 @@ export const isTooSmall=(required, actual)=>{
     return actual<required
 }*/
 
-const Modal=({match, history, impact})=>(
-    <Dialog open={true} onRequestClose={history.goBack}>
-        <DialogTitle>Explanation</DialogTitle>
-        <p>
-        {impact}
-        </p>
-    </Dialog>
-)
-
 export const Payments=withStyles(styles)(({firebase, classes, match})=>(
 <Paper className={classes.root}>
-    
+    <Route path={`${match.url}/modal/:id`} component={PaymentModal}/> 
     <Table className={classes.table}>
         <TableHead>
             <TableRow>
@@ -62,19 +53,22 @@ export const Payments=withStyles(styles)(({firebase, classes, match})=>(
             </TableRow>
         </TableHead>
         <TableBody>
-            {firebase.data.payments.map(({id, dueDate, paymentRequired, paymentDate, payment, issue, impact})=>{
-                const url=`${match.url}/modal/${id}`
-                return (
+            {firebase.data.payments.map(({id, dueDate, paymentRequired, paymentDate, payment, issue, impact})=>(
                 <TableRow key={id} className={issue?classes.somethingWrong:null}>
                     <TableCell>{id}</TableCell>
                     <TableCell>{dueDate}</TableCell>
                     <TableCell numeric>{paymentRequired}</TableCell>
                     <TableCell>{paymentDate}</TableCell>
                     <TableCell numeric>{payment}</TableCell>
-                    {issue?<TableCell><Link to={url}><Button>How will this impact me?</Button></Link></TableCell>:null}
-                    <Route path={url} render={({match, history})=><Modal match={match} history={history} impact={impact}/>}/>
+                    {issue?<TableCell>
+                        <Link to={`${match.url}/modal/${id}`}>
+                            <Button>
+                                How will this impact me?
+                            </Button>
+                        </Link>
+                    </TableCell>:null}
                 </TableRow>
-            )})}
+            ))}
         </TableBody>
     </Table>
 </Paper>
@@ -88,6 +82,8 @@ Payments.propTypes={
                 payment:PropTypes.number,
                 paymentDate:PropTypes.string,//potentially change this to JS date
                 paymentRequired:PropTypes.number.isRequired,
+                issue:PropTypes.string,
+                impact:PropTypes.string
             })).isRequired
         }).isRequired
     }).isRequired

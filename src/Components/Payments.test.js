@@ -42,25 +42,79 @@ describe('issue with impact', ()=>{
         impact:'A late payment causes additional interest to be accrued.  This will need to be payed off by making an additional payment.'
     }]
     it('highlights row', ()=>{
-    const payment=mount(<MemoryRouter><Route path='/' render={({match})=><Payments firebase={firebase(payments)} match={match}/>}/></MemoryRouter>)
-        const rowProps=payment.find(TableBody).find(TableRow).first().prop('style')
-        expect(rowProps).toEqual({
-            backgroundColor: theme.palette.secondary.A100
-        })
+        const payment=mount(
+        <MemoryRouter>
+            <Route 
+                path='/' 
+                render={({match})=>(
+                    <Payments 
+                        firebase={firebase(payments)} 
+                        match={match}
+                    />
+                )}
+            />
+        </MemoryRouter>)
+        const row=payment.find(TableBody).find(TableRow).first()//.prop('style')
+        //console.log(payment.find(TableBody).find(TableRow).first().html())
+        expect(row.hasClass('Component-somethingWrong-3')).toEqual(true)
     })
     it('provides button with explanation', ()=>{
-        const payment=mount(<MemoryRouter><Route path='/' render={({match})=><Payments firebase={firebase(payments)} match={match}/>}/></MemoryRouter>)
+        const payment=mount(
+            <MemoryRouter>
+                <Route 
+                    path='/' 
+                    render={({match})=>(
+                        <Payments 
+                            firebase={firebase(payments)} 
+                            match={match}
+                        />
+                    )}
+                />
+            </MemoryRouter>)
         const buttonText=payment.find(TableBody).find(TableRow).find(Button).text()
         expect(buttonText).toEqual('How will this impact me?') 
     })
+})
+describe('integration test with modal', ()=>{
+    const payments=[{
+        id:'1',
+        dueDate:'2015-05-05',
+        paymentDate:'2015-05-06',
+        payment:500,
+        paymentRequired:500,
+        issue:'Late Full Payment',
+        impact:'A late payment causes additional interest to be accrued.  This will need to be payed off by making an additional payment.'
+    }]
     it('reveals modal on button click', ()=>{
-        const payment=mount(<MemoryRouter><Route path='/' render={({match})=><Payments firebase={firebase(payments)} match={match}/>}/></MemoryRouter>)
-        payment.find(TableBody).find(TableRow).find(Link).simulate('click')
+        const payment=mount(
+            <MemoryRouter>
+                <Route 
+                    path='/' 
+                    render={({match})=>(
+                        <Payments 
+                            firebase={firebase(payments)} 
+                            match={match}
+                        />
+                    )}
+                />
+            </MemoryRouter>)
+        payment.find(TableBody).find(TableRow).find(Button).simulate('click')
         expect(payment.find(Dialog).props('open')).toEqual(true)
     })
     it('provides correct explanation in modal', ()=>{
-        const payment=mount(<MemoryRouter><Route path='/' render={({match})=><Payments firebase={firebase(payments)} match={match}/>}/></MemoryRouter>)
-        payment.find(TableBody).find(TableRow).find(Link).simulate('click')
+        const payment=mount(
+            <MemoryRouter>
+                <Route 
+                    path='/' 
+                    render={({match})=>(
+                        <Payments 
+                            firebase={firebase(payments)} 
+                            match={match}
+                        />
+                    )}
+                />
+            </MemoryRouter>)
+        payment.find(TableBody).find(TableRow).find(Button).simulate('click')
         expect(payment.find(Dialog).find('p').first().text()).toEqual('A late payment causes additional interest to be accrued.  This will need to be payed off by making an additional payment.')
     })
 
