@@ -37,7 +37,7 @@ PaymentModal.propTypes={
     }).isRequired
 }
 
-const mapStateToProps=state=>({
+const mapStateToProps=({firebase})=>({
     firebase
 })
 

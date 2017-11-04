@@ -12,3 +12,7 @@ export const config = {
     storageBucket: "originationapp.appspot.com",
     messagingSenderId: "201270072023"
 }
+export const localConfig={
+    userProfile: 'users', // firebase root where user profiles are stored
+    enableLogging: false, // enable/disable Firebase's database logging
+}

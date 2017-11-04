@@ -10,9 +10,12 @@ import { withStyles } from 'material-ui/styles'
 import Paper from 'material-ui/Paper'
 import Dialog, { DialogTitle } from 'material-ui/Dialog'
 import PropTypes from 'prop-types'
-import {firebaseConnect} from 'react-redux-firebase'
+import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase'
+
+import { compose } from 'redux'
 import {connect} from 'react-redux'
 import {Link, Route} from 'react-router-dom'
+import { CircularProgress } from 'material-ui/Progress';
 import PaymentModal from './PaymentModal'
 const styles = theme => ({
     root: {
@@ -39,7 +42,7 @@ export const isTooSmall=(required, actual)=>{
     return actual<required
 }*/
 
-export const Payments=withStyles(styles)(({firebase, classes, match})=>(
+export const Payments=withStyles(styles)(({classes, match, payments})=>(
 <Paper className={classes.root}>
     <Route path={`${match.url}/modal/:id`} component={PaymentModal}/> 
     <Table className={classes.table}>
@@ -53,7 +56,7 @@ export const Payments=withStyles(styles)(({firebase, classes, match})=>(
             </TableRow>
         </TableHead>
         <TableBody>
-            {firebase.data.payments.map(({id, dueDate, paymentRequired, paymentDate, payment, issue, impact})=>(
+            {isLoaded(payments)?payments.map(({id, dueDate, paymentRequired, paymentDate, payment, issue, impact})=>(
                 <TableRow key={id} className={issue?classes.somethingWrong:null}>
                     <TableCell>{id}</TableCell>
                     <TableCell>{dueDate}</TableCell>
@@ -68,7 +71,7 @@ export const Payments=withStyles(styles)(({firebase, classes, match})=>(
                         </Link>
                     </TableCell>:null}
                 </TableRow>
-            ))}
+            )):<CircularProgress/>}
         </TableBody>
     </Table>
 </Paper>
@@ -84,9 +87,23 @@ Payments.propTypes={
                 paymentRequired:PropTypes.number.isRequired,
                 issue:PropTypes.string,
                 impact:PropTypes.string
-            })).isRequired
+            }))
         }).isRequired
-    }).isRequired
+    }).isRequired,
 }
-const mapStateToProps=({firebase})=>({firebase})
-export default connect(mapStateToProps)(Payments)
+const Test=({payments})=>{
+    console.log(payments)
+    return (<div>Hello world</div>)
+}
+
+export default compose(
+    firebaseConnect([
+      'payments' //  \
+    ]),
+    connect(
+      ({firebase}) => ({
+        payments: firebase.data.payments,
+        // profile: state.firebase.profile // load profile
+      })
+    )
+  )(Payments)
