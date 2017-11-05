@@ -28,6 +28,8 @@ const styles = theme => ({
     },
     somethingWrong:{backgroundColor:theme.palette.secondary.A100}
 })
+/**We may have to implement this logic client side...
+ * it seems I can't execute a FaaS based solely on querying?? */
 /**this logic, like all business logic, should be in the FaaS */
 /*export const isLate=(dueDate, paymentDate)=>{
     if(!paymentDate){

@@ -1,5 +1,6 @@
 const origination=require('./origination')
 const uuidv4 = require('uuid/v4')
+const {ledger, secret}=require('./credentials.json')
 //integration tests
 jasmine.DEFAULT_TIMEOUT_INTERVAL=10000
 it('creates loan', ()=>{
@@ -7,15 +8,15 @@ it('creates loan', ()=>{
     const amount=100000 //1000 dollars
     const wireId='6'
 
-    return origination.create(id, amount, wireId).then(result=>expect(result).toEqual("funded"))
+    return origination.create(id, amount, wireId, ledger, secret).then(result=>expect(result).toEqual("funded"))
 })
 it('makes payments on loan', ()=>{
     const id=uuidv4() //unique Id
     const amount=100000 //1000 dollars
     const wireId='6'
     const payAmount=500 //5 dollars
-    return origination.create(id, amount, wireId).then(result=>expect(result).toEqual("funded")).then(()=>{
-        return origination.pay(id, payAmount)
+    return origination.create(id, amount, wireId, ledger, secret).then(result=>expect(result).toEqual("funded")).then(()=>{
+        return origination.pay(id, payAmount, ledger, secret)
     }).then(result=>expect(result).toEqual("payment made"))
     
 })

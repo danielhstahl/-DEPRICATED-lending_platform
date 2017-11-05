@@ -1,11 +1,12 @@
 const sequence = require('sequence-sdk')
-const {ledger, secret}=require('./credentials.json')
-const lending_app = new sequence.Client({
-    ledger,
-    credential:secret
-})
 
-module.exports.create=(id, amount, wireId)=>{
+//const lending_app = 
+
+module.exports.create=(id, amount, wireId, ledger, secret)=>{
+    const lending_app=new sequence.Client({
+        ledger,
+        credential:secret
+    })
     return lending_app.assets.create({
         alias:id,
         keys:[{alias:'underwriting'}],
@@ -37,7 +38,11 @@ module.exports.create=(id, amount, wireId)=>{
     })
 }
 
-module.exports.pay=(id, amount)=>{
+module.exports.pay=(id, amount, ledger, secret)=>{
+    const lending_app=new sequence.Client({
+        ledger,
+        credential:secret
+    })
     return lending_app.transactions.transact(builder => {
         builder.issue({
             assetAlias: 'usd',

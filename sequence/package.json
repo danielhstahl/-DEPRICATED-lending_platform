@@ -1,8 +1,8 @@
 {
-  "name": "sequence",
-  "version": "1.0.0",
+  "name": "sequence_lending_app",
+  "version": "2.0.0",
   "description": "interactions with sequence",
-  "main": "index.js",
+  "main": "origination.js",
   "scripts": {
     "test": "jest"
   },
