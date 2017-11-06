@@ -1,7 +1,7 @@
 'use strict'
 const functions = require('firebase-functions')
 const origination=require('sequence_lending_app')
-const finance=require('node-finance')
+const am=require('./am')
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
@@ -17,7 +17,10 @@ admin.initializeApp(functions.config().firebase)
 exports.generateSchedule=functions.database.ref('/loans/{loanId}').onWrite(event => {
     // Grab the current value of what was written to the Realtime Database.
     const {rate, term, amount} = event.data.val()
-    const schedule=finance.GenAmortizationSchedule(amount, term, rate*100)
+    console.log(event.data.val())
+    const schedule=am.schedule(amount, rate, term)
+    //console.log(schedule)
+    console.log(event.params)
     return event.data.ref.parent.parent.child(`/payments/${event.params.loanId}`).push(schedule)
 })
 //fund
