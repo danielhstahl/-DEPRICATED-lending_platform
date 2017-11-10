@@ -16,5 +16,8 @@
     "jest": "^21.2.1",
     "sequence_lending_app": "^2.0.0"
   },
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "uuid": "^3.1.0"
+  }
 }

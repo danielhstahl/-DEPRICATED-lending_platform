@@ -17,25 +17,30 @@ admin.initializeApp(functions.config().firebase)
 exports.generateSchedule=functions.database.ref('/loans/{loanId}').onWrite(event => {
     // Grab the current value of what was written to the Realtime Database.
     const {rate, term, amount} = event.data.val()
-    console.log(event.data.val())
     const schedule=am.schedule(amount, rate, term)
-    //console.log(schedule)
-    console.log(event.params)
     return event.data.ref.parent.parent.child(`/payments/${event.params.loanId}`).push(schedule)
 })
 //fund
 exports.fundLoan=functions.database.ref('/loans/{loanId}').onWrite(event=>{
-    const {id, amount, wireId}=event.data.val()
+    const {amount, wireId}=event.data.val()
     const {ledger, secret}=functions.config().sequence
-    return origination.create(id, amount, wireId, ledger, secret)
+    //id, amount, wireId, ledger, secret
+    return origination.create(event.params.loanId, amount, wireId, ledger, secret)
 })
 /**end app decision is written to loan */
 
 /**ran when app is submitted */
 exports.appDecision=functions.database.ref('/apps/{appId}').onWrite(event=>{
     //add decisioning logic here
-    const {rate, term, amount}=event.data.val()
-    return event.data.ref.parent.parent.child('loans').push({rate, term, amount})
+    const {rate, term, amount, decision}=event.data.val()
+    //decision is temporary!
+    
+    if(decision){
+        event.data.ref.set({decision})
+        return event.data.ref.parent.parent.child('loans').push({rate, term, amount})
+    }   
+    return event.data.ref.set({decision})
+    
 })
 /**end when app is submitted */
 
