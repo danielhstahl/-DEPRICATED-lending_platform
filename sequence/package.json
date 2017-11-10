@@ -9,8 +9,10 @@
   "author": "Daniel Stahl",
   "license": "ISC",
   "dependencies": {
-    "jest": "^21.2.1",
-    "sequence-sdk": "^1.0.3",
-    "uuid": "^3.1.0"
+    "sequence-sdk": "^1.0.3"
+  },
+  "devDependencies": {
+    "uuid": "^3.1.0",
+    "jest": "^21.2.1"
   }
 }
