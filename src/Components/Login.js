@@ -25,7 +25,6 @@ Login.propTypes={
         login:PropTypes.func.isRequired
     }).isRequired
 }
-const mapStateToProps=({firebase})=>({firebase})
 export default /*connect(mapStateToProps)*/firebaseConnect()(Login)//compose//(
     //firebaseConnect(),
     

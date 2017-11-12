@@ -10,7 +10,7 @@ import { withStyles } from 'material-ui/styles'
 import Paper from 'material-ui/Paper'
 import Dialog, { DialogTitle } from 'material-ui/Dialog'
 import PropTypes from 'prop-types'
-import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase'
+import { firestoreConnect, isLoaded, isEmpty } from 'react-redux-firebase'
 
 import { compose } from 'redux'
 import {connect} from 'react-redux'
@@ -99,12 +99,12 @@ const Test=({payments})=>{
 }
 
 export default compose(
-    firebaseConnect([
+    firestoreConnect([
       'payments' //  \
     ]),
     connect(
-      ({firebase}) => ({
-        payments: firebase.data.payments,
+      ({firestore}) => ({
+        payments: firestore.data.payments,
         // profile: state.firebase.profile // load profile
       })
     )

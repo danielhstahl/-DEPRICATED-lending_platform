@@ -1,6 +1,18 @@
 const admin = require('firebase-admin')
 const uuidv4 = require('uuid/v4')
 admin.initializeApp = jest.fn()
+admin.firestore=()=>{
+    return {
+        collection:{
+            loans:{
+                push:jest.fn(val=>Promise.resolve(val))
+            },
+            payments:{
+                push:jest.fn(val=>Promise.resolve(val))
+            }
+        }
+    }
+}
 
 const functions = require('firebase-functions')
 
@@ -25,13 +37,14 @@ describe('generateSchedule', ()=>{
     }
     const loanId=uuidv4()
     const fakeEvent={
-        data:new functions.database.DeltaSnapshot(null, null, null, data, 'loans'),
+        data:new functions.firestore.DocumentDeltaSnapshot()
+            //null, null, null, data, 'loans'),
         params:{
             loanId
         }
     }
 
-    const refStub = jest.fn(() => ({
+    /*const refStub = jest.fn(() => ({
         parent: {
             parent:{
                 child: jest.fn(childName => ({
@@ -40,15 +53,15 @@ describe('generateSchedule', ()=>{
             }
           
         }
-    }))
+    }))*/
     const expected=am.schedule(data.amount, data.rate, data.term)
-    Object.defineProperty(fakeEvent.data, 'ref', { get: refStub })
+    //Object.defineProperty(fakeEvent.data, 'ref', { get: refStub })
     it('writes schedule to payments', ()=>{
         let result
         return myFunctions.generateSchedule(fakeEvent).then(result_=>{
             result=result_
             //expect(result.ref).toEqual('payments/4')
-            return expect(result.val).toEqual(expected)
+            return expect(result.val.schedule).toEqual(expected)
         }).then(()=>expect(result.ref).toEqual(`/payments/${loanId}`))
     })
 })
@@ -60,7 +73,7 @@ describe('fundLoan', ()=>{
     }
     const loanId=uuidv4()
     const fakeEvent={
-        data:new functions.database.DeltaSnapshot(null, null, null, data, '4'),
+        data:new functions.firestore.DocumentDeltaSnapshot(null, null, {amount:50000}, data, '4'),
         params:{
             loanId
         }
@@ -93,7 +106,7 @@ describe('appDecision', ()=>{
     it('creates loan if approved', ()=>{
         const expected=data
         const fakeEvent={
-            data:new functions.database.DeltaSnapshot(null, null, null, Object.assign({}, data, {decision:true}), '4'),
+            data:new functions.firestore.DocumentDeltaSnapshot(null, null, null, Object.assign({}, data, {decision:true}), '4'),
             params:{
                 appId
             }
@@ -108,7 +121,7 @@ describe('appDecision', ()=>{
         const expected=false
 
         const fakeEvent={
-            data:new functions.database.DeltaSnapshot(null, null, null, Object.assign({}, data, {decision:false}), '4'),
+            data:new functions.firestore.DocumentDeltaSnapshot(null, null, null, Object.assign({}, data, {decision:false}), '4'),
             params:{
                 appId
             }

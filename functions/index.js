@@ -2,42 +2,43 @@
 const functions = require('firebase-functions')
 const origination=require('sequence_lending_app')
 const am=require('./am')
-// // Create and Deploy Your First Cloud Functions
-// // https://firebase.google.com/docs/functions/write-firebase-functions
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//  response.send("Hello from Firebase!");
-// });
 const admin = require('firebase-admin')
 admin.initializeApp(functions.config().firebase)
 
-
 /**ran when app decision is written to loan */
 //when loan app decision comes through, generate the schedule
-exports.generateSchedule=functions.database.ref('/loans/{loanId}').onWrite(event => {
+exports.generateSchedule=functions.firestore.document('/loans/{loanId}').onWrite(event => {
     // Grab the current value of what was written to the Realtime Database.
-    const {rate, term, amount} = event.data.val()
+    const {rate, term, amount} = event.data.data()
     const schedule=am.schedule(amount, rate, term)
-    return event.data.ref.parent.parent.child(`/payments/${event.params.loanId}`).push(schedule)
+    return admin.firestore().collection('payments').doc(event.params.loanId).set({schedule})
+    //return event.data.ref.parent.parent.child(`/payments/${event.params.loanId}`).push(schedule)
 })
+
+
 //fund
-exports.fundLoan=functions.database.ref('/loans/{loanId}').onWrite(event=>{
-    const {amount, wireId}=event.data.val()
-    const {ledger, secret}=functions.config().sequence
-    //id, amount, wireId, ledger, secret
-    return origination.create(event.params.loanId, amount, wireId, ledger, secret)
+exports.fundLoan=functions.firestore.document('/loans/{loanId}').onUpdate(event=>{
+    const {wireId}=event.data.val()
+    if(wireId){
+        const {ledger, secret}=functions.config().sequence
+        //id, amount, wireId, ledger, secret
+        const {amount}=event.data.previous.data()
+        return origination.create(event.params.loanId, amount, wireId, ledger, secret)
+    }
+    
 })
+
 /**end app decision is written to loan */
 
 /**ran when app is submitted */
-exports.appDecision=functions.database.ref('/apps/{appId}').onWrite(event=>{
+exports.appDecision=functions.firestore.document('/apps/{appId}').onWrite(event=>{
     //add decisioning logic here
     const {rate, term, amount, decision}=event.data.val()
     //decision is temporary!
     
     if(decision){
         event.data.ref.set({decision})
-        return event.data.ref.parent.parent.child('loans').push({rate, term, amount})
+        return admin.firestore().collection('loans').push({rate, term, amount, appId:event.params.appId})
     }   
     return event.data.ref.set({decision})
     
