@@ -39,14 +39,15 @@ exports.fundLoan=functions.firestore.document('/apps/{appId}/loans/{loanId}').on
 /**ran when app is submitted */
 exports.appDecision=functions.firestore.document('/apps/{appId}').onWrite(event=>{
     //add decisioning logic here
-    const {rate, term, amount, decision}=event.data.val()
+    const {rate, term, amount, uid, decision}=event.data.val()
     //decision is temporary!
     
     if(decision){
         return event.data.ref.set({
             decision, rate, 
             term, amount, 
-            appId:event.params.appId
+            //appId:event.params.appId,
+            uid
         })
         
     }   
