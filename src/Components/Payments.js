@@ -44,6 +44,7 @@ export const isTooSmall=(required, actual)=>{
     return actual<required
 }*/
 
+
 export const Payments=withStyles(styles)(({classes, match, payments})=>(
 <Paper className={classes.root}>
     <Route path={`${match.url}/modal/:id`} component={PaymentModal}/> 
@@ -58,7 +59,7 @@ export const Payments=withStyles(styles)(({classes, match, payments})=>(
             </TableRow>
         </TableHead>
         <TableBody>
-            {isLoaded(payments)?payments.map(({id, dueDate, paymentRequired, paymentDate, payment, issue, impact})=>(
+            {/*isLoaded(payments)?payments.map(({id, dueDate, paymentRequired, paymentDate, payment, issue, impact})=>(
                 <TableRow key={id} className={issue?classes.somethingWrong:null}>
                     <TableCell>{id}</TableCell>
                     <TableCell>{dueDate}</TableCell>
@@ -73,7 +74,7 @@ export const Payments=withStyles(styles)(({classes, match, payments})=>(
                         </Link>
                     </TableCell>:null}
                 </TableRow>
-            )):<CircularProgress/>}
+            )):<CircularProgress/>*/}
         </TableBody>
     </Table>
 </Paper>
@@ -99,12 +100,23 @@ const Test=({payments})=>{
 }
 
 export default compose(
-    firestoreConnect([
-      'payments' //  \
-    ]),
+    firestoreConnect((props) =>{
+        console.log(props)
+        return [
+            {
+                collection:'payments',
+                doc:'paymentId' //hmmm
+            }
+        ]
+        /*return [
+            { collection: 'todos', doc: props.todoId } // or `todos/${props.todoId}`
+          ]*/
+    } 
+    ),
     connect(
-      ({firestore}) => ({
+      ({firestore, firebase}) => ({
         payments: firestore.data.payments,
+
         // profile: state.firebase.profile // load profile
       })
     )

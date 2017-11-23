@@ -30,8 +30,15 @@ const getTextProps=(propName, values, onChange)=>({
     value:values[propName]&&values[propName].value,
     onChange:value=>onChange(value.target.value, propName)
 })
-export const Application=withStyles(styles)(({values, onChange, classes, firestore})=>{
+const getValuesForApp=(keys, values, uid)=>{
+    return keys.reduce((aggr, key)=>({
+        ...aggr,
+        [key]:values[key].value
+    }), {decision:true, uid})
+}
+export const Application=withStyles(styles)(({values, onChange, classes, firestore, auth})=>{
     console.log(firestore)
+    const keys=Object.keys(values)
     return (
 <Paper >
     <TextField 
@@ -50,12 +57,9 @@ export const Application=withStyles(styles)(({values, onChange, classes, firesto
         {...getTextProps("rate", values, onChange)}
     />
     <Button 
-        disabled={Object.keys(values).find(key=>values[key].error)}
+        disabled={keys.find(key=>values[key].error)}
         raised
-        onClick={()=>firestore.add(Object.keys(values).reduce((aggr, key)=>({
-            ...aggr,
-            [key]:values[key].value
-        }), {decision:true}))}
+        onClick={()=>firestore.add(getValuesForApp(keys, values, auth.uid))}
     >
         Submit
     </Button>
@@ -77,7 +81,8 @@ Application.propTypes={
     }).isRequired
 }
 const mapStateToProps=state=>({
-    values:state.application
+    values:state.application,
+    auth:state.firebase.auth
 })
 const mapDispatchToProps=dispatch=>({
     onChange:(value, propName)=>updateText(dispatch, value, propName)
