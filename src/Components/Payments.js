@@ -100,24 +100,25 @@ const Test=({payments})=>{
 }
 
 export default compose(
-    firestoreConnect((props) =>{
-        console.log(props)
+    /*firestoreConnect(({appId, loanId}) =>[
+        `apps/${appId}/loans/${loanId}`
+    ]),*/
+    firestoreConnect((props, store)=>{
+        console.log(store.getState())
         return [
-            {
-                collection:'payments',
-                doc:'paymentId' //hmmm
-            }
-        ]
-        /*return [
-            { collection: 'todos', doc: props.todoId } // or `todos/${props.todoId}`
-          ]*/
-    } 
-    ),
+        { 
+            collection: `apps`, 
+            where: ['uid', '==', store.getState().firebase.auth.uid] 
+        }
+    ]}),
     connect(
-      ({firestore, firebase}) => ({
-        payments: firestore.data.payments,
+      ({firestore, firebase}) => {
+          console.log(firestore)
+          return {
+            payments: firestore.data.payments,//.schedule,
 
         // profile: state.firebase.profile // load profile
-      })
+      }
+    }
     )
   )(Payments)
