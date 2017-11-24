@@ -34,7 +34,7 @@ const getValuesForApp=(keys, values, uid)=>{
     return keys.reduce((aggr, key)=>({
         ...aggr,
         [key]:parseFloat(values[key].value)
-    }), {decision:true, uid})
+    }), {/*decision:true,*/ uid})
 }
 export const Application=withStyles(styles)(({values, onChange, classes, firestore, auth})=>{
     console.log(firestore)
@@ -59,7 +59,7 @@ export const Application=withStyles(styles)(({values, onChange, classes, firesto
         {...curryTextProps("rate")}
     />
     <Button 
-        disabled={keys.find(key=>values[key].error)}
+        disabled={keys.find(key=>values[key].error)?true:false}
         raised
         onClick={()=>firestore.add('apps', getValuesForApp(keys, values, auth.uid))}
     >
