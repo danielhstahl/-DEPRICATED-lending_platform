@@ -1,4 +1,4 @@
-const checkNaNOrPositive=value=>isNaN(value)||value<0
+const checkNaNOrPositive=value=>(isNaN(value)||value<0)?true:false
 const notPositiveNumber=value=>checkNaNOrPositive(parseFloat(value))
 
 export default (state={}, action)=>{

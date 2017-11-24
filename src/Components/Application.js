@@ -33,33 +33,35 @@ const getTextProps=(propName, values, onChange)=>({
 const getValuesForApp=(keys, values, uid)=>{
     return keys.reduce((aggr, key)=>({
         ...aggr,
-        [key]:values[key].value
+        [key]:parseFloat(values[key].value)
     }), {decision:true, uid})
 }
 export const Application=withStyles(styles)(({values, onChange, classes, firestore, auth})=>{
     console.log(firestore)
     const keys=Object.keys(values)
+    console.log(values)
+    const curryTextProps=name=>getTextProps(name, values, onChange)
     return (
 <Paper >
     <TextField 
         className={classes.textField}
         label="Amount"
-        {...getTextProps("amount", values, onChange)}
+        {...curryTextProps("amount")}
     />
     <TextField 
         className={classes.textField}
         label="Term"
-        {...getTextProps("term", values, onChange)}
+        {...curryTextProps("term")}
     />
     <TextField 
         className={classes.textField}
         label="Rate"
-        {...getTextProps("rate", values, onChange)}
+        {...curryTextProps("rate")}
     />
     <Button 
         disabled={keys.find(key=>values[key].error)}
         raised
-        onClick={()=>firestore.add(getValuesForApp(keys, values, auth.uid))}
+        onClick={()=>firestore.add('apps', getValuesForApp(keys, values, auth.uid))}
     >
         Submit
     </Button>

@@ -9,6 +9,7 @@ admin.initializeApp(functions.config().firebase)
 //when loan app decision comes through, generate the schedule
 exports.generateSchedule=functions.firestore.document('/apps/{appId}/loans/{loanId}').onWrite(event => {
     // Grab the current value of what was written to the Realtime Database.
+    console.log("got to geneerateSchedule")
     const {rate, term, amount} = event.data.data()
     const schedule=am.schedule(amount, rate, term)
     const {appId, loanId}=event.params
@@ -24,7 +25,7 @@ exports.generateSchedule=functions.firestore.document('/apps/{appId}/loans/{loan
 
 //fund
 exports.fundLoan=functions.firestore.document('/apps/{appId}/loans/{loanId}').onUpdate(event=>{
-    const {wireId}=event.data.val()
+    const {wireId}=event.data.data()
     if(wireId){
         const {ledger, secret}=functions.config().sequence
         //id, amount, wireId, ledger, secret
@@ -39,17 +40,23 @@ exports.fundLoan=functions.firestore.document('/apps/{appId}/loans/{loanId}').on
 /**ran when app is submitted */
 exports.appDecision=functions.firestore.document('/apps/{appId}').onWrite(event=>{
     //add decisioning logic here
-    const {rate, term, amount, uid, decision}=event.data.val()
+    const {rate, term, amount, decision}=event.data.data()
     //decision is temporary!
-    
+    console.log(rate)
+    console.log(term)
+    console.log(amount)
+    console.log(decision)
     if(decision){
-        return event.data.ref.set({
-            decision, rate, 
-            term, amount, 
-            //appId:event.params.appId,
-            uid
-        })
-        
+        admin.firestore().
+        collection('apps').
+        doc(event.params.appId).collection('loans').add({
+            rate, 
+           term, amount
+       })
+        /*event.data.ref.add('loans', {
+             rate, 
+            term, amount
+        })*/
     }   
     return event.data.ref.set({decision})
     
