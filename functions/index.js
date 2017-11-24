@@ -9,22 +9,9 @@ admin.initializeApp(functions.config().firebase)
 //when loan app decision comes through, generate the schedule
 exports.generateSchedule=functions.firestore.document('/loans/{loanId}').onCreate(event => {
     // Grab the current value of what was written to the Realtime Database.
-    console.log("got to geneerateSchedule")
     const {rate, term, amount, appId} = event.data.data()
-    const previousData=event.data.previous.data()
     const schedule=am.schedule(amount, rate, term)
-    //const {appId, loanId}=event.params
-    console.log(appId)
-    console.log(previousData)
-    if (appId == previousData.appId) return
-
     return event.data.ref.set({schedule}, {merge:true})
-        
-     /*   admin.firestore().
-        collection('loans').
-        doc(loanId).
-        set({schedule}, {merge:true})*/
-    //return event.data.ref.parent.parent.child(`/payments/${event.params.loanId}`).push(schedule)
 })
 
 
@@ -33,7 +20,6 @@ exports.fundLoan=functions.firestore.document('/apps/{appId}/loans/{loanId}').on
     const {wireId}=event.data.data()
     if(wireId){
         const {ledger, secret}=functions.config().sequence
-        //id, amount, wireId, ledger, secret
         const {amount}=event.data.previous.data()
         return origination.create(event.params.loanId, amount, wireId, ledger, secret)
     }
@@ -48,23 +34,15 @@ exports.appDecision=functions.firestore.document('/apps/{appId}').onCreate(event
     const {rate, term, amount, uid}=event.data.data()
     //decision is temporary!
     const decision=true
-    console.log(rate)
-    console.log(term)
-    console.log(amount)
-    console.log(decision)
     if(decision){
         admin.firestore().
-        collection('loans').
-        /*doc(event.params.appId).collection('loans').*/add({
+        collection('loans').add({
             rate, 
            term, amount,
            uid,
            appId:event.params.appId
        })
-        /*event.data.ref.add('loans', {
-             rate, 
-            term, amount
-        })*/
+
     }   
     //merge:true keeps the original data
     return event.data.ref.set({decision}, {merge:true})
