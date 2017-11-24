@@ -40,8 +40,9 @@ exports.fundLoan=functions.firestore.document('/apps/{appId}/loans/{loanId}').on
 /**ran when app is submitted */
 exports.appDecision=functions.firestore.document('/apps/{appId}').onWrite(event=>{
     //add decisioning logic here
-    const {rate, term, amount, decision}=event.data.data()
+    const {rate, term, amount}=event.data.data()
     //decision is temporary!
+    const decision=true
     console.log(rate)
     console.log(term)
     console.log(amount)
@@ -58,7 +59,8 @@ exports.appDecision=functions.firestore.document('/apps/{appId}').onWrite(event=
             term, amount
         })*/
     }   
-    return event.data.ref.set({decision})
+    //merge:true keeps the original data
+    return event.data.ref.set({decision}, {merge:true})
     
 })
 /**end when app is submitted */
