@@ -3,11 +3,9 @@ import Button from 'material-ui/Button'
 import { withStyles } from 'material-ui/styles'
 import Paper from 'material-ui/Paper'
 import PropTypes from 'prop-types'
-import { firestoreConnect, isLoaded, isEmpty } from 'react-redux-firebase'
+import { firestoreConnect } from 'react-redux-firebase'
 import TextField from 'material-ui/TextField';
-import { compose } from 'redux'
 import {connect} from 'react-redux'
-import {Link, Route} from 'react-router-dom'
 import {updateText} from '../Application/actions'
 
 const styles = theme => ({
@@ -34,7 +32,7 @@ const getValuesForApp=(keys, values, uid)=>{
     return keys.reduce((aggr, key)=>({
         ...aggr,
         [key]:parseFloat(values[key].value)
-    }), {/*decision:true,*/ uid})
+    }), {uid})
 }
 export const Application=withStyles(styles)(({values, onChange, classes, firestore, auth})=>{
     console.log(firestore)

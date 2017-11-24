@@ -27,7 +27,7 @@ const store = createStoreWithFirebase(lendingApp)
 
 ReactDOM.render(<Provider store={store}>
     <Router>
-        <Route path='/' component={App}/>
+        <Route path={`${process.env.PUBLIC_URL}/`} component={App}/>
     </Router>
   </Provider>, document.getElementById('root'));
 registerServiceWorker();

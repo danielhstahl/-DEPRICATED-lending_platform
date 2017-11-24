@@ -1,7 +1,7 @@
 const defaultState={
     loan:""
 }
-export default (state={}, action)=>{
+export default (state=defaultState, action)=>{
     switch(action.type){
         case "SELECTED_LOAN":
             return {

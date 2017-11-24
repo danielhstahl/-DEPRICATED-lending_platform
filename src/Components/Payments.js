@@ -10,11 +10,9 @@ import { withStyles } from 'material-ui/styles'
 import Paper from 'material-ui/Paper'
 import Select from 'material-ui/Select'
 import { MenuItem } from 'material-ui/Menu'
-import Dialog, { DialogTitle } from 'material-ui/Dialog'
 import PropTypes from 'prop-types'
-import { firestoreConnect, isLoaded, isEmpty } from 'react-redux-firebase'
+import { firestoreConnect, isLoaded } from 'react-redux-firebase'
 import {selectLoan} from '../Payments/actions'
-import { compose } from 'redux'
 import {connect} from 'react-redux'
 import {Link, Route} from 'react-router-dom'
 import { CircularProgress } from 'material-ui/Progress';
@@ -100,7 +98,7 @@ export const Payments=withStyles(styles)(({classes, match, loans, loan, onSelect
 Payments.propTypes={
     firebase:PropTypes.shape({
         data:PropTypes.shape({
-            payments:PropTypes.arrayOf(PropTypes.shape({
+            loans:PropTypes.arrayOf(PropTypes.shape({
                 id:PropTypes.string.isRequired,
                 dueDate:PropTypes.string.isRequired, //potentially change this to JS date
                 payment:PropTypes.number,
@@ -109,7 +107,7 @@ Payments.propTypes={
                 issue:PropTypes.string,
                 impact:PropTypes.string
             }))
-        }).isRequired
+        })
     }).isRequired,
 }
 

@@ -2,8 +2,7 @@ import React from 'react'
 import Button from 'material-ui/Button'
 import PropTypes from 'prop-types'
 import {firebaseConnect} from 'react-redux-firebase'
-import {connect} from 'react-redux'
-import { compose } from 'redux'
+
 
 const google={
     provider: 'google',
@@ -25,7 +24,4 @@ Login.propTypes={
         login:PropTypes.func.isRequired
     }).isRequired
 }
-export default /*connect(mapStateToProps)*/firebaseConnect()(Login)//compose//(
-    //firebaseConnect(),
-    
-//)
+export default firebaseConnect()(Login)
