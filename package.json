@@ -2,6 +2,7 @@
   "name": "tdd_example_test",
   "version": "0.0.1",
   "private": true,
+  "homepage": "https://phillyfan1138.github.io/lending_app",
   "devDependencies": {
     "enzyme": "^3.1.0",
     "enzyme-adapter-react-16": "^1.0.3",
@@ -9,6 +10,7 @@
   },
   "dependencies": {
     "firebase": "^4.6.1",
+    "gh-pages": "^1.1.0",
     "material-ui": "^1.0.0-beta.19",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",
@@ -24,6 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   }
 }
