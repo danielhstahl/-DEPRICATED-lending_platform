@@ -2,7 +2,7 @@
   "name": "tdd_example_test",
   "version": "0.0.1",
   "private": true,
-  "homepage": "https://phillyfan1138.github.io/lending_app",
+  "homepage": "https://phillyfan1138.github.io/lending_platform",
   "devDependencies": {
     "enzyme": "^3.1.0",
     "enzyme-adapter-react-16": "^1.0.3",
