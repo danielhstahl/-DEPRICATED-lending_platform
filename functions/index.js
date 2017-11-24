@@ -7,7 +7,7 @@ admin.initializeApp(functions.config().firebase)
 
 /**ran when app decision is written to loan */
 //when loan app decision comes through, generate the schedule
-exports.generateSchedule=functions.firestore.document('/loans/{loanId}').onWrite(event => {
+exports.generateSchedule=functions.firestore.document('/loans/{loanId}').onCreate(event => {
     // Grab the current value of what was written to the Realtime Database.
     console.log("got to geneerateSchedule")
     const {rate, term, amount, appId} = event.data.data()
@@ -43,7 +43,7 @@ exports.fundLoan=functions.firestore.document('/apps/{appId}/loans/{loanId}').on
 /**end app decision is written to loan */
 
 /**ran when app is submitted */
-exports.appDecision=functions.firestore.document('/apps/{appId}').onWrite(event=>{
+exports.appDecision=functions.firestore.document('/apps/{appId}').onCreate(event=>{
     //add decisioning logic here
     const {rate, term, amount, uid}=event.data.data()
     //decision is temporary!
