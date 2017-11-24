@@ -7,18 +7,23 @@ admin.initializeApp(functions.config().firebase)
 
 /**ran when app decision is written to loan */
 //when loan app decision comes through, generate the schedule
-exports.generateSchedule=functions.firestore.document('/apps/{appId}/loans/{loanId}').onWrite(event => {
+exports.generateSchedule=functions.firestore.document('/loans/{loanId}').onWrite(event => {
     // Grab the current value of what was written to the Realtime Database.
     console.log("got to geneerateSchedule")
-    const {rate, term, amount} = event.data.data()
+    const {rate, term, amount, appId} = event.data.data()
+    const previousData=event.data.previous.data()
     const schedule=am.schedule(amount, rate, term)
-    const {appId, loanId}=event.params
-    return admin.firestore().
-        collection('apps').
-        doc(appId).
+    //const {appId, loanId}=event.params
+    console.log(appId)
+    console.log(previousData)
+    if (appId == previousData.appId) return
+
+    return event.data.ref.set({schedule}, {merge:true})
+        
+     /*   admin.firestore().
         collection('loans').
         doc(loanId).
-        set({schedule})
+        set({schedule}, {merge:true})*/
     //return event.data.ref.parent.parent.child(`/payments/${event.params.loanId}`).push(schedule)
 })
 
@@ -40,7 +45,7 @@ exports.fundLoan=functions.firestore.document('/apps/{appId}/loans/{loanId}').on
 /**ran when app is submitted */
 exports.appDecision=functions.firestore.document('/apps/{appId}').onWrite(event=>{
     //add decisioning logic here
-    const {rate, term, amount}=event.data.data()
+    const {rate, term, amount, uid}=event.data.data()
     //decision is temporary!
     const decision=true
     console.log(rate)
@@ -49,10 +54,12 @@ exports.appDecision=functions.firestore.document('/apps/{appId}').onWrite(event=
     console.log(decision)
     if(decision){
         admin.firestore().
-        collection('apps').
-        doc(event.params.appId).collection('loans').add({
+        collection('loans').
+        /*doc(event.params.appId).collection('loans').*/add({
             rate, 
-           term, amount
+           term, amount,
+           uid,
+           appId:event.params.appId
        })
         /*event.data.ref.add('loans', {
              rate, 
