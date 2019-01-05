@@ -1,6 +1,6 @@
 {
   "name": "sequence_lending_app",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "interactions with sequence",
   "main": "origination.js",
   "scripts": {
